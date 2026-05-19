@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deutsch A2 — Menschen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;color:#1c1c1e;min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding:16px}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.logo{width:40px;height:40px;border-radius:10px;background:#3C3489;display:flex;align-items:center;justify-content:center;color:#EEEDFE;font-weight:600;font-size:14px;flex-shrink:0}
+.header-title{font-size:17px;font-weight:600;color:#1c1c1e}
+.header-sub{font-size:12px;color:#8e8e93}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.stat-n{font-size:22px;font-weight:600;color:#1c1c1e}
+.stat-l{font-size:11px;color:#8e8e93;margin-top:2px;line-height:1.3}
+.prog-bar{width:100%;height:6px;background:#e5e5ea;border-radius:99px;margin-bottom:16px;overflow:hidden}
+.prog-fill{height:100%;background:#534AB7;border-radius:99px;width:8%;transition:width .5s}
+.tabs{display:flex;background:#fff;border-radius:12px;padding:4px;gap:4px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab{flex:1;padding:8px 4px;font-size:12px;color:#8e8e93;cursor:pointer;border:none;background:none;border-radius:8px;font-family:inherit;transition:all .2s;text-align:center}
+.tab.active{background:#534AB7;color:#fff;font-weight:500}
+.section{display:none}
+.section.active{display:block}
+.lesson-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.lesson-card{background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:2px solid transparent}
+.lesson-card.active{border-color:#534AB7}
+.lc-icon{font-size:26px;flex-shrink:0}
+.lc-info{flex:1;min-width:0}
+.lc-num{font-size:11px;color:#8e8e93;text-transform:uppercase;letter-spacing:.4px}
+.lc-title{font-size:14px;font-weight:600;color:#1c1c1e;margin:2px 0}
+.lc-topic{font-size:12px;color:#8e8e93}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:500}
+.badge-new{background:#EEEDFE;color:#534AB7}
+.badge-locked{background:#f2f2f7;color:#8e8e93}
+.badge-done{background:#d1fae5;color:#065f46}
+.ex-box{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ex-type{font-size:11px;color:#8e8e93;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.ex-q{font-size:15px;font-weight:600;color:#1c1c1e;margin-bottom:14px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{padding:14px 16px;border:1.5px solid #e5e5ea;border-radius:10px;cursor:pointer;font-size:14px;color:#1c1c1e;background:#fff;text-align:left;font-family:inherit;line-height:1.4;transition:background .15s;min-height:44px}
+.opt:hover{background:#f5f5f7}
+.opt.correct{background:#d1fae5;border-color:#10b981;color:#065f46}
+.opt.wrong{background:#fee2e2;border-color:#ef4444;color:#7f1d1d}
+.feedback{font-size:13px;margin-top:10px;padding:10px 12px;border-radius:10px;line-height:1.5}
+.fb-ok{background:#d1fae5;color:#065f46}
+.fb-err{background:#fee2e2;color:#7f1d1d}
+.fill-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:#1c1c1e}
+.fill-input{border:1.5px solid #e5e5ea;border-radius:10px;padding:10px 12px;font-size:16px;background:#fff;color:#1c1c1e;width:80px;text-align:center;font-family:inherit;min-height:44px}
+.fill-input.correct{border-color:#10b981;background:#d1fae5;color:#065f46}
+.fill-input.wrong{border-color:#ef4444;background:#fee2e2;color:#7f1d1d}
+.btn-p{display:inline-block;padding:13px 22px;background:#534AB7;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-family:inherit;font-weight:600;min-height:44px;margin-top:10px;width:100%}
+.btn-p:active{background:#3C3489;transform:scale(.98)}
+.vocab-filter{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+.vocab-filter::-webkit-scrollbar{display:none}
+.vf-btn{padding:9px 16px;font-size:13px;border:1.5px solid #e5e5ea;border-radius:20px;background:#fff;color:#8e8e93;cursor:pointer;white-space:nowrap;min-height:40px;font-family:inherit;font-weight:500}
+.vf-btn.active{background:#534AB7;color:#fff;border-color:#534AB7}
+.vocab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.vocab-card{background:#fff;border-radius:12px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;min-height:72px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.08);border:2px solid transparent}
+.vocab-card.flipped{background:#EEEDFE;border-color:#AFA9EC}
+.vocab-de{font-size:14px;font-weight:600;color:#1c1c1e}
+.vocab-es{font-size:13px;color:#534AB7;margin-top:4px;display:none;font-weight:500}
+.vocab-card.flipped .vocab-es{display:block}
+.vocab-card.flipped .vocab-de{color:#3C3489}
+.grammar-box{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.grammar-rule{font-size:13px;color:#3c3c43;line-height:1.7}
+.g-hl{font-weight:600;color:#534AB7}
+.g-example{background:#EEEDFE;border-radius:10px;padding:12px 14px;margin:10px 0;font-size:14px;color:#3C3489;line-height:1.5}
+.gtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.gtable td{padding:8px 10px;border:1px solid #e5e5ea}
+.gtable tr:first-child{background:#f5f5f7}
+.chat-area{background:#f5f5f7;border-radius:12px;padding:12px;margin-bottom:10px;height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.msg{max-width:86%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.5}
+.msg-ai{background:#fff;color:#1c1c1e;align-self:flex-start;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.msg-user{background:#534AB7;color:#fff;align-self:flex-end}
+.chat-row{display:flex;gap:8px}
+.chat-in{flex:1;padding:12px 14px;border:1.5px solid #e5e5ea;border-radius:10px;font-size:15px;background:#fff;color:#1c1c1e;font-family:inherit;min-height:44px}
+.send-btn{padding:0 16px;background:#534AB7;color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:18px;min-height:44px;min-width:50px}
+.send-btn:disabled{opacity:.5}
+.scenario-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.sc-btn{padding:14px 16px;border:1.5px solid #e5e5ea;border-radius:12px;background:#fff;color:#1c1c1e;font-size:14px;cursor:pointer;text-align:left;font-family:inherit;min-height:44px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sc-btn:active{background:#f5f5f7}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="logo">A2</div>
+  <div>
+    <div class="header-title">Deutsch A2 — Menschen</div>
+    <div class="header-sub">Curso interactivo con IA · Hueber</div>
+  </div>
+</div>
+
+<div class="stat-row">
+  <div class="stat"><div class="stat-n" id="s-lessons">1</div><div class="stat-l">Lecciones hechas</div></div>
+  <div class="stat"><div class="stat-n" id="s-vocab">0</div><div class="stat-l">Vocabulario aprendido</div></div>
+  <div class="stat"><div class="stat-n" id="s-streak">1</div><div class="stat-l">Días seguidos</div></div>
+</div>
+
+<div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('lecciones',this)">📚 Lecciones</button>
+  <button class="tab" onclick="showTab('vocabulario',this)">🃏 Vocab</button>
+  <button class="tab" onclick="showTab('gramatica',this)">✏️ Gramática</button>
+  <button class="tab" onclick="showTab('practica',this)">🤖 IA</button>
+</div>
+
+<!-- LECCIONES -->
+<div id="lecciones" class="section active">
+  <div class="lesson-list">
+    <div class="lesson-card active" onclick="selectLesson(this)">
+      <div class="lc-icon">🏠</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 1</div>
+        <div class="lc-title">Zuhause</div>
+        <div class="lc-topic">El hogar y los muebles</div>
+      </div>
+      <span class="badge badge-new">Activo</span>
+    </div>
+    <div class="lesson-card" onclick="selectLesson(this)">
+      <div class="lc-icon">💼</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 2</div>
+        <div class="lc-title">Arbeit und Beruf</div>
+        <div class="lc-topic">Trabajo y profesiones</div>
+      </div>
+      <span class="badge badge-locked">Bloqueado</span>
+    </div>
+    <div class="lesson-card" onclick="selectLesson(this)">
+      <div class="lc-icon">🛒</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 3</div>
+        <div class="lc-title">Einkaufen</div>
+        <div class="lc-topic">Ir de compras</div>
+      </div>
+      <span class="badge badge-locked">Bloqueado</span>
+    </div>
+    <div class="lesson-card" onclick="selectLesson(this)">
+      <div class="lc-icon">❤️</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 4</div>
+        <div class="lc-title">Gesundheit</div>
+        <div class="lc-topic">Salud y el cuerpo</div>
+      </div>
+      <span class="badge badge-locked">Bloqueado</span>
+    </div>
+    <div class="lesson-card" onclick="selectLesson(this)">
+      <div class="lc-icon">✈️</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 5</div>
+        <div class="lc-title">Reisen</div>
+        <div class="lc-topic">Viajes y turismo</div>
+      </div>
+      <span class="badge badge-locked">Bloqueado</span>
+    </div>
+    <div class="lesson-card" onclick="selectLesson(this)">
+      <div class="lc-icon">👫</div>
+      <div class="lc-info">
+        <div class="lc-num">Modul 6</div>
+        <div class="lc-title">Menschen & Kontakte</div>
+        <div class="lc-topic">Relaciones sociales</div>
+      </div>
+      <span class="badge badge-locked">Bloqueado</span>
+    </div>
+  </div>
+
+  <div class="ex-box" id="ex1">
+    <div class="ex-type">Modul 1 · ejercicio 1 de 3</div>
+    <div class="ex-q">¿Cuál es la traducción de <strong>"die Küche"</strong>?</div>
+    <div class="options" id="opts1">
+      <button class="opt" onclick="checkOpt(this,false,'opts1','fb1','nb1','la cocina')">el baño</button>
+      <button class="opt" onclick="checkOpt(this,true,'opts1','fb1','nb1','la cocina')">la cocina</button>
+      <button class="opt" onclick="checkOpt(this,false,'opts1','fb1','nb1','la cocina')">el dormitorio</button>
+      <button class="opt" onclick="checkOpt(this,false,'opts1','fb1','nb1','la cocina')">el salón</button>
+    </div>
+    <div id="fb1" class="feedback" style="display:none"></div>
+    <div id="nb1" style="display:none"><button class="btn-p" onclick="showEl('ex2')">Siguiente ejercicio →</button></div>
+  </div>
+
+  <div class="ex-box" id="ex2" style="display:none">
+    <div class="ex-type">Modul 1 · ejercicio 2 de 3</div>
+    <div class="ex-q">Completa: <em>"Das ist ___ Wohnzimmer."</em><br><span style="font-size:13px;color:#8e8e93">(Eso es el salón.)</span></div>
+    <div class="fill-row">
+      <span>Das ist</span>
+      <input class="fill-input" id="fill1" placeholder="?" maxlength="5" />
+      <span>Wohnzimmer.</span>
+    </div>
+    <button class="btn-p" onclick="checkFill()">Comprobar</button>
+    <div id="fb2" class="feedback" style="display:none"></div>
+    <div id="nb2" style="display:none"><button class="btn-p" onclick="showEl('ex3')">Siguiente ejercicio →</button></div>
+  </div>
+
+  <div class="ex-box" id="ex3" style="display:none">
+    <div class="ex-type">Modul 1 · ejercicio 3 de 3</div>
+    <div class="ex-q">¿Cuál usa correctamente el <strong>Dativ</strong>?</div>
+    <div class="options" id="opts3">
+      <button class="opt" onclick="checkOpt3(this,false)">Ich wohne in ein großes Haus.</button>
+      <button class="opt" onclick="checkOpt3(this,true)">Ich wohne in einem großen Haus.</button>
+      <button class="opt" onclick="checkOpt3(this,false)">Ich wohne in einen großen Haus.</button>
+    </div>
+    <div id="fb3" class="feedback" style="display:none"></div>
+    <div id="nb3" style="display:none"><button class="btn-p" onclick="completeLesson()">¡Completar lección! 🎉</button></div>
+  </div>
+</div>
+
+<!-- VOCABULARIO -->
+<div id="vocabulario" class="section">
+  <p style="font-size:13px;color:#8e8e93;margin-bottom:12px">Toca cada tarjeta para ver la traducción</p>
+  <div class="vocab-filter">
+    <button class="vf-btn active" onclick="filterVocab('hogar',this)">🏠 El hogar</button>
+    <button class="vf-btn" onclick="filterVocab('trabajo',this)">💼 Trabajo</button>
+    <button class="vf-btn" onclick="filterVocab('salud',this)">❤️ Salud</button>
+  </div>
+  <div class="vocab-grid" id="vocab-grid"></div>
+  <p id="vocab-count" style="font-size:12px;color:#8e8e93;margin-top:10px;text-align:center"></p>
+</div>
+
+<!-- GRAMÁTICA -->
+<div id="gramatica" class="section">
+  <div class="grammar-box">
+    <div class="ex-type">Gramática A2 · 1</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:10px">El caso Dativ</div>
+    <div class="grammar-rule">Después de preposiciones de ubicación (<span class="g-hl">in, an, auf, bei, mit, nach, seit, von, zu, aus</span>) se usa Dativ.</div>
+    <div class="g-example">Ich bin <span class="g-hl">in der</span> Küche. <span style="color:#8e8e93;font-size:12px">(Estoy en la cocina.)</span></div>
+    <div class="g-example">Er wohnt <span class="g-hl">in einem</span> großen Haus. <span style="color:#8e8e93;font-size:12px">(Vive en una casa grande.)</span></div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="gtable">
+        <tr><td style="font-weight:600">Artículo</td><td style="font-weight:600;color:#534AB7">Mask.</td><td style="font-weight:600;color:#534AB7">Neut.</td><td style="font-weight:600;color:#534AB7">Fem.</td></tr>
+        <tr><td style="color:#8e8e93">definido</td><td><strong>dem</strong></td><td><strong>dem</strong></td><td><strong>der</strong></td></tr>
+        <tr><td style="color:#8e8e93">indefinido</td><td><strong>einem</strong></td><td><strong>einem</strong></td><td><strong>einer</strong></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="grammar-box">
+    <div class="ex-type">Gramática A2 · 2</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:10px">Verbos modales: wollen y sollen</div>
+    <div class="grammar-rule"><span class="g-hl">wollen</span> = querer (deseo propio)<br><span class="g-hl">sollen</span> = deber (obligación externa)</div>
+    <div class="g-example">Ich <span class="g-hl">will</span> nach Berlin fahren. <span style="color:#8e8e93;font-size:12px">(Quiero ir a Berlín.)</span></div>
+    <div class="g-example">Du <span class="g-hl">sollst</span> um 8 Uhr hier sein. <span style="color:#8e8e93;font-size:12px">(Debes estar aquí a las 8.)</span></div>
+  </div>
+  <div class="grammar-box">
+    <div class="ex-type">Gramática A2 · 3</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:10px">Perfekt con haben y sein</div>
+    <div class="grammar-rule">La mayoría usa <span class="g-hl">haben</span>. Los verbos de movimiento o cambio de estado usan <span class="g-hl">sein</span>.</div>
+    <div class="g-example">Ich <span class="g-hl">habe</span> gegessen. <span style="color:#8e8e93;font-size:12px">(He comido.)</span></div>
+    <div class="g-example">Er <span class="g-hl">ist</span> gefahren. <span style="color:#8e8e93;font-size:12px">(Ha conducido.)</span></div>
+  </div>
+</div>
+
+<!-- PRÁCTICA IA -->
+<div id="practica" class="section">
+  <div class="scenario-btns">
+    <button class="sc-btn" onclick="setScenario('hogar')">🏠 Describir tu casa</button>
+    <button class="sc-btn" onclick="setScenario('compras')">🛒 Ir de compras</button>
+    <button class="sc-btn" onclick="setScenario('trabajo')">💼 Hablar del trabajo</button>
+  </div>
+  <div class="chat-area" id="chat-area">
+    <div class="msg msg-ai">Hallo! Soy tu profesor de alemán A2 🎓 Elige un escenario o escríbeme en alemán o español.</div>
+  </div>
+  <div class="chat-row">
+    <input class="chat-in" id="chat-in" placeholder="Escribe en alemán o español..." onkeydown="if(event.key==='Enter')sendMsg()" />
+    <button class="send-btn" id="send-btn" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const VOCAB={
+  hogar:[
+    {de:'die Küche',es:'la cocina'},{de:'das Wohnzimmer',es:'el salón'},{de:'das Schlafzimmer',es:'el dormitorio'},
+    {de:'das Badezimmer',es:'el baño'},{de:'der Flur',es:'el pasillo'},{de:'das Fenster',es:'la ventana'},
+    {de:'die Treppe',es:'la escalera'},{de:'der Keller',es:'el sótano'},{de:'der Balkon',es:'el balcón'},
+    {de:'die Garage',es:'el garaje'},{de:'die Tür',es:'la puerta'},{de:'die Wand',es:'la pared'}
+  ],
+  trabajo:[
+    {de:'der Arzt',es:'el médico'},{de:'die Krankenschwester',es:'la enfermera'},{de:'der Lehrer',es:'el profesor'},
+    {de:'das Büro',es:'la oficina'},{de:'der Chef',es:'el jefe'},{de:'die Firma',es:'la empresa'},
+    {de:'die Stelle',es:'el puesto'},{de:'das Gehalt',es:'el salario'},{de:'der Urlaub',es:'las vacaciones'},
+    {de:'die Besprechung',es:'la reunión'},{de:'der Kollege',es:'el compañero'},{de:'die Aufgabe',es:'la tarea'}
+  ],
+  salud:[
+    {de:'der Kopf',es:'la cabeza'},{de:'der Bauch',es:'el estómago'},{de:'das Bein',es:'la pierna'},
+    {de:'der Arm',es:'el brazo'},{de:'die Hand',es:'la mano'},{de:'der Fuß',es:'el pie'},
+    {de:'krank',es:'enfermo'},{de:'gesund',es:'sano'},{de:'der Husten',es:'la tos'},
+    {de:'das Fieber',es:'la fiebre'},{de:'die Tablette',es:'la pastilla'},{de:'das Rezept',es:'la receta'}
+  ]
+};
+let learnedVocab=0;
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function selectLesson(el){
+  document.querySelectorAll('.lesson-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+function checkOpt(btn,correct,optsId,fbId,nbId,correctText){
+  document.querySelectorAll('#'+optsId+' .opt').forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct) document.querySelectorAll('#'+optsId+' .opt').forEach(o=>{if(o.textContent===correctText)o.classList.add('correct');});
+  const fb=document.getElementById(fbId);
+  fb.style.display='block';
+  fb.className='feedback '+(correct?'fb-ok':'fb-err');
+  fb.textContent=correct?'¡Correcto! "die Küche" = la cocina (femenino).':'Incorrecto. "die Küche" = la cocina.';
+  document.getElementById(nbId).style.display='block';
+}
+function showEl(id){
+  document.getElementById(id).style.display='block';
+  setTimeout(()=>document.getElementById(id).scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+function checkFill(){
+  const val=document.getElementById('fill1').value.trim().toLowerCase();
+  const ok=val==='das';
+  document.getElementById('fill1').classList.add(ok?'correct':'wrong');
+  const fb=document.getElementById('fb2');
+  fb.style.display='block';
+  fb.className='feedback '+(ok?'fb-ok':'fb-err');
+  fb.textContent=ok?'¡Perfecto! "Wohnzimmer" es neutro → "das".':'Incorrecto. "Wohnzimmer" es neutro, el artículo es "das".';
+  document.getElementById('nb2').style.display='block';
+}
+function checkOpt3(btn,correct){
+  document.querySelectorAll('#opts3 .opt').forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct) document.querySelectorAll('#opts3 .opt').forEach(o=>{if(o.textContent.includes('einem großen'))o.classList.add('correct');});
+  const fb=document.getElementById('fb3');
+  fb.style.display='block';
+  fb.className='feedback '+(correct?'fb-ok':'fb-err');
+  fb.textContent=correct?'¡Excelente! "in" + ubicación → Dativ: "in einem großen Haus".':'Incorrecto. Con "in" + ubicación usamos Dativ: "in einem großen Haus".';
+  document.getElementById('nb3').style.display='block';
+}
+function completeLesson(){
+  const n=parseInt(document.getElementById('s-lessons').textContent);
+  document.getElementById('s-lessons').textContent=n+1;
+  document.getElementById('prog').style.width=Math.min(100,(n+1)*8)+'%';
+  alert('¡Lección 1 completada! 🎉 Prueba ahora Vocabulario o Práctica IA.');
+}
+function filterVocab(cat,btn){
+  document.querySelectorAll('.vf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVocab(cat);
+}
+function renderVocab(cat){
+  const grid=document.getElementById('vocab-grid');
+  grid.innerHTML='';
+  VOCAB[cat].forEach(w=>{
+    const c=document.createElement('div');
+    c.className='vocab-card';
+    c.innerHTML=`<div class="vocab-de">${w.de}</div><div class="vocab-es">${w.es}</div>`;
+    c.onclick=()=>{
+      if(!c.classList.contains('flipped')){c.classList.add('flipped');learnedVocab++;document.getElementById('s-vocab').textContent=learnedVocab;}
+      else c.classList.remove('flipped');
+    };
+    grid.appendChild(c);
+  });
+  document.getElementById('vocab-count').textContent=VOCAB[cat].length+' palabras en esta categoría';
+}
+renderVocab('hogar');
+
+const SCENARIOS={
+  hogar:'¡Hablemos de tu casa! 🏠 Wie ist deine Wohnung? Intenta describirla en alemán.',
+  compras:'¡Al supermercado! 🛒 Was brauchst du? ¿Qué necesitas comprar? Escríbelo en alemán.',
+  trabajo:'¡Cuéntame del trabajo! 💼 Was machst du beruflich? Responde en alemán.'
+};
+function setScenario(s){addMsg(SCENARIOS[s],'ai');}
+function addMsg(text,who){
+  const area=document.getElementById('chat-area');
+  const d=document.createElement('div');
+  d.className='msg msg-'+who;
+  d.textContent=text;
+  area.appendChild(d);
+  area.scrollTop=area.scrollHeight;
+  return d;
+}
+async function sendMsg(){
+  const inp=document.getElementById('chat-in');
+  const btn=document.getElementById('send-btn');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  addMsg(txt,'user');
+  inp.value='';
+  btn.disabled=true;
+  const loadDiv=addMsg('...','ai');
+  try{
+    const msgs=[];
+    document.querySelectorAll('#chat-area .msg').forEach(m=>{
+      if(m===loadDiv)return;
+      msgs.push({role:m.classList.contains('msg-user')?'user':'assistant',content:m.textContent});
+    });
+    msgs.push({role:'user',content:txt});
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Eres un profesor de alemán A2 amigable. El alumno estudia con Menschen A2 (Hueber). 
+Explica siempre en español, usa alemán para ejemplos y correcciones. Corrige errores con amabilidad explicando la regla. Propón siempre una frase nueva para practicar. Sé conciso (máx 4 líneas). Temas A2: hogar, trabajo, compras, salud, viajes, Dativ, Akkusativ, Perfekt, verbos modales.`,
+        messages:msgs
+      })
+    });
+    const data=await resp.json();
+    loadDiv.textContent=data.content?.map(b=>b.text||'').join('')||'Lo siento, inténtalo de nuevo.';
+  }catch(e){
+    loadDiv.textContent='Error de conexión. Inténtalo de nuevo.';
+  }
+  btn.disabled=false;
+  document.getElementById('chat-area').scrollTop=9999;
+}
+</script>
+</body>
+</html>
